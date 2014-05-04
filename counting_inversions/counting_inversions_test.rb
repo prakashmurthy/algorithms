@@ -14,7 +14,13 @@ class TestCountingInversions < MiniTest::Unit::TestCase
     assert_equal 0, a.inversions_count
   end
 
-  def test_with_2_elements
+  def test_with_2_elements_0
+    a = EnhancedArray.new([53,127])
+    assert_equal [53,127], a.sorted_array
+    assert_equal 0, a.inversions_count
+  end
+
+  def test_with_2_elements_1
     a = EnhancedArray.new([127,53])
     assert_equal [53,127], a.sorted_array
     assert_equal 1, a.inversions_count
@@ -72,6 +78,18 @@ class TestCountingInversions < MiniTest::Unit::TestCase
     a = EnhancedArray.new([2,5,3,1])
     assert_equal [1,2,3,5], a.sorted_array
     assert_equal 4, a.inversions_count
+  end
+
+  def test_with_4_elements_5
+    a = EnhancedArray.new([5,2,3,1])
+    assert_equal [1,2,3,5], a.sorted_array
+    assert_equal 5, a.inversions_count
+  end
+
+  def test_with_4_elements_6
+    a = EnhancedArray.new([5,3,2,1])
+    assert_equal [1,2,3,5], a.sorted_array
+    assert_equal 6, a.inversions_count
   end
 
   def test_split_array_with_even_length
