@@ -4,6 +4,12 @@ require './graph'
 class GraphTest < MiniTest::Unit::TestCase
   def setup
 
+    ### Case # 1 : Simple tree (3 nodes, 2 edges) ######
+    # A -- B
+    #       \
+    #        \
+    #         C
+    ################### 
     @three_nodes_two_edges = Graph.new(<<END
 A B
 B A C
@@ -11,11 +17,11 @@ C B
 END
     )
 
-    #### Case # 2 ######
-    #3--4-----5--6
-    #|\/|     |\/|
-    #|/\|     |/\|
-    #2--1-----7--8
+    #### Case # 2 : Two cliques separated by minimum cut ###
+    # 3--4-----5--6
+    # |\/|     |\/|
+    # |/\|     |/\|
+    # 2--1-----7--8
     #######
     @two_cliques_sep_by_min_cut = Graph.new(<<END
 1 2 3 4 7
@@ -29,17 +35,45 @@ END
 END
     )
 
-    #### Case # 3 ######
-    #A--B
-    #|  |
-    #|  |
-    #C--D
+    #### Case # 3 : Square with no diagonals ######
+    # A--B
+    # |  |
+    # |  |
+    # C--D
     #######
     @square = Graph.new(<<END
 A B C
 B A D
 C A D
 D B C
+END
+                       )
+
+    #### Case # 4 : Square with one diagonals ######
+    # A--B
+    # |\ |
+    # | \|
+    # C--D
+    #######
+    @square_one = Graph.new(<<END
+A B C D
+B A D
+C A D
+D A B C
+END
+                           )
+
+    #### Case # 5 : Square with two diagonals ######
+    # A--B
+    # |\/|
+    # |/\|
+    # C--D
+    #######
+    @square_two = Graph.new(<<END
+A B C D
+B A C D
+C A B D
+D A B C
 END
     )
   end
@@ -48,12 +82,16 @@ END
     assert_equal 3, @three_nodes_two_edges.number_of_vertices
     assert_equal 8, @two_cliques_sep_by_min_cut.number_of_vertices
     assert_equal 4, @square.number_of_vertices
+    assert_equal 4, @square_one.number_of_vertices
+    assert_equal 4, @square_two.number_of_vertices
   end
 
   def test_vertices
     assert_equal %w(A B C), @three_nodes_two_edges.vertices
     assert_equal %w(1 2 3 4 5 6 7 8), @two_cliques_sep_by_min_cut.vertices
     assert_equal %w(A B C D), @square.vertices
+    assert_equal %w(A B C D), @square_one.vertices
+    assert_equal %w(A B C D), @square_two.vertices
   end
 
   def test_edges
@@ -68,6 +106,12 @@ END
                   ], @two_cliques_sep_by_min_cut.edges
     assert_equal [["A <=> B", 1], ["A <=> C", 1],
                   ["B <=> D", 1], ["C <=> D", 1]] , @square.edges
+    assert_equal [["A <=> B", 1], ["A <=> C", 1],
+                  ["A <=> D", 1],
+                  ["B <=> D", 1], ["C <=> D", 1]] , @square_one.edges
+    assert_equal [["A <=> B", 1], ["A <=> C", 1],
+                  ["A <=> D", 1], ["B <=> C", 1],
+                  ["B <=> D", 1], ["C <=> D", 1]] , @square_two.edges
   end
 
   def test_collapse
